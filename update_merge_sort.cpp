@@ -1,0 +1,1 @@
+https://discuss.codechef.com/t/point-updates-in-merge-sort-trees/59170
