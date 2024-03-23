@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+
+// #define __int128_t i128
+const double eps = 1e-6;
+#define ll long long
+typedef long double ld;
+#define pb push_back // for vector
+#define pi pair <ll, ll>
+// #define mp make_pair
+#define all(a) a.begin(), a.end()
+#define rep(i, a, b) for (ll i = a; i < b; i++)
+#define ff first
+#define ss second
+#define vt vector
+#define vi vt<ll>
+#define ub upper_bound
+#define lb lower_bound
+#define repr(i, n, a) for (ll i = n; i >= a; i--)
+#define dq deque
+#define inset(a, st) st.find(a) != st.end()
+#define issub(a, b) b.find(a) != string::npos // check if a is substr of b
+#define len(a) (ll)a.size()
+const ld PI = 2 * acos(0.0);
+const ll mod = 1e9+7;
+const ll nax = 2e5 + 5;
+const ll mod2 = 998244353;
+
+void ff(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+}
+ll binexpo(ll a, ll n , ll mod ){
+   if(n == 0){return 1;}   ll r = binexpo(a, n / 2 , mod);
+   if(n & 1){r *= a % mod; r%= mod;} return r;
+}
+
+ll binexpo2(ll a, ll b)
+{
+    ll result = 1ll;
+    while (b) {
+       if (b & 1ll)
+            result = (result * a) % mod;
+        a = (a * a) % mod;
+        b >>= 1ll;
+    }
+    return result;
+}
+
+ll inverse_mod(ll a ){
+   return binexpo(a , mod -2 , mod);
+}
+
+ll gcd(ll & x, ll & y, ll a, ll b ){
+if(b == 0){ x = 1; y = 0; return a;}
+ll g = gcd(x, y, b , a%b);
+ll x1 = x, y1 = y; 
+x = y1 ;
+y = x1 - (a/b)*y1;
+return g;
+}
+
+struct cmp{
+  bool operator()(int a,int b){
+    return a < b;
+  }
+};
+bool cmp2(pair<ll,ll>&a, pair<ll,ll>&b){
+    return a.first + a.second > b.first + b.second;
+}
+
+
+
+
+
+void solve(){
+
+
+}
+
+
+
+
+int main(){
+    // ff();
+    
+    int t; cin>>t; while(t--){
+   
+    solve();
+
+    }
+}
