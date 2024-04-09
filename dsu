@@ -1,0 +1,17 @@
+ vt<int>parent;
+ vt<int>ranks;
+
+ int find(int i ){
+  if(parent[i]  == i){return i;}
+  return parent[i] = find(parent[i]);
+ }
+
+ bool join(int x ,int y){
+  int sx = find(x);
+  int sy = find(y);
+  if(sx == sy){return 1;}
+  if(ranks[sx] < ranks[sy]){swap(sx , sy);}
+  ranks[sx] += ranks[sy];
+  parent[sy] = sx; 
+  return 0;
+ }
