@@ -76,7 +76,7 @@ int query(int t , int i , int j , int l, int r, int k){
         return seg[t][0];
     }
     int mid = (i + j)/2;
-    int left = 2*t , right = 2*t+1;
+    int left = 2*t ;
     int tot = upper_bound(all(seg[left]), r) - lower_bound(all(seg[left]) , l);
     if(tot >= k){
         return query(2*t , i , mid, l ,r , k);
