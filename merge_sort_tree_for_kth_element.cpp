@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
+//https://www.spoj.com/problems/MKTHNUM/
 // #define __int128_t i128
 const double eps = 1e-6;
 #define ll long long
