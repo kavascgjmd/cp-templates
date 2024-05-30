@@ -1,0 +1,71 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const long long mod = 1e9+7;
+ll N = 1e6+1;
+void ff (){
+  ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+}
+
+
+vector<ll>fac;
+ll binexpo(ll a , ll n ,ll mod){
+  if(n == 0){
+    return 1;
+  }
+   ll res = binexpo ( a , n/2, mod);
+   res *= res %  mod ;
+   res %= mod;
+   if(n & 1){
+    res *= a %mod;
+    res %= mod;
+   }
+   return res;
+}
+ 
+ll ncr (ll n , ll r ){
+   if(n == 0){
+    return 0;
+   }
+   if(r == 0){
+    return 1;
+   }
+   if(n == r){
+    return 1;
+   }
+   ll x = fac[n];
+   ll y = fac[n-r];
+   ll z = fac[r];
+   ll sol = 1;
+   sol *= x;
+   sol %= mod;
+   sol *= binexpo(y ,mod-2 , mod);
+   sol %= mod ;
+   sol *= binexpo(z, mod-2, mod);
+   sol %= mod;
+   return sol;
+ 
+}
+int main () {
+   
+   ff();
+   fac.resize(N);
+   fac[0] = 1;
+   fac[1] = 1 ;
+   for(ll i = 2; i<N; i++){
+    fac[i] = fac[i-1];
+    fac[i] *= i % mod;
+    fac[i] %= mod;
+   }
+
+
+   ll n;
+   cin>>n;
+   while( n -- ){
+    ll b , a;
+    cin>>b>>a;
+    cout << ncr(b, a )<<'\n';
+   }
+   
+}
