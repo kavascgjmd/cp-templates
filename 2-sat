@@ -1,0 +1,46 @@
+1 - b1) + x1);
+g[m*(1 - b2) + x2].push_back(m*b1 + x1);
+gr[m*b1 +x1].push_back(m*(1-b2) + x2);
+}
+vt<int>topo;
+vt<bool>visited(2*m , 0);
+for(int i = 0 ; i<2*m ; i++){
+    if(!visited[i]){
+        dfs(visited, g, i, topo);
+    }
+}
+ 
+reverse(all(topo));
+visited.assign(2*m ,0);
+int color = 0; vt<int>colors(2*m,0);
+for(auto & x : topo){
+    if(!visited[x]){
+        dfs2(x, gr, color++, colors, visited);
+    }
+}
+vt<char>ans(m);
+rep(i , 0 , m){
+    if(colors[i] == colors[i+m]){
+        cout <<"IMPOSSIBLE\n"; return;
+    }
+    if(colors[i] < colors[i+m]){
+        ans [i] = '+';
+    }
+    else {
+        ans[i] = '-';
+    }
+}
+rep(i , 0 , m){
+    cout << ans[i]<<" ";
+}
+}
+ 
+int main() {
+    // ff();
+    // ll T;
+    // cin >> T;
+    // while (T--) {
+        solve();
+    // }
+    return 0;
+}
