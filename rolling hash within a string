@@ -1,0 +1,102 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+const double eps = 1e-6;
+#define ll long long
+#define pi pair
+typedef long double ld;
+#define pb push_back
+#define all(a) a.begin(), a.end()
+#define rep(i, a, b) for (ll i = a; i < b; i++)
+#define ff first
+#define ss second
+#define vt vector
+#define vi vt<ll>
+#define ub upper_bound
+#define lb lower_bound
+#define repr(i, n, a) for (ll i = n; i >= a; i--)
+#define dq deque
+#define inset(a, st) st.find(a) != st.end()
+#define issub(a, b) b.find(a) != string::npos
+#define len(a) (ll)a.size()
+const ld PI = 2 * acos(0.0);
+const ll mod = 1e9+7;
+const ll mod2 = 998244353;
+const ll nax = 2e5 + 5;
+const ll N = 2e5 + 1;
+
+void ff() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+}
+
+
+
+vt<int>PS ;
+vt<int>PS3;
+
+vt<pi<ll,ll>>pd(1e6,{1,1});
+bool check(string & s1  , int i, int j, int len ){
+    if(i + len > s1.size() || j + len > s1.size()){
+      return false;
+    }
+   
+    ll val1 = (PS[i] - PS[i+len] + mod )% mod;
+    ll val2 = (PS[j] - PS[j+len] + mod) % mod;
+    ll val3 = (PS3[i]- PS3[i+len] + mod2)% mod2;
+    ll val4 = (PS3[j]- PS3[j+len]+ mod2)% mod2;
+    if(s1.size()-i > s1.size() - j){
+     ll val = s1.size() - i - s1.size() + j;
+     val2 *= pd[val].first; val2 %= mod;
+     val4 *= pd[val].second; val4 %= mod2;
+    }
+    else {
+      ll val = s1.size() - j -s1.size() + i ;
+      val1 *= pd[val].first; val1 %= mod;
+      val3 *= pd[val].second; val3 %= mod2;
+    }
+  
+    if(val1 == val2 && val3 == val4){return 1;}
+    return 0;
+}
+
+void solve(){
+int n , L , R ;
+cin>>n>>L>>R;
+string s; cin>>s;
+
+
+int N1 = s.size();
+PS.assign(N1+1,0); 
+PS3.assign(N1+1,0); 
+ll d = 256;
+ll h = d, h2  = d;
+PS[N1-1] = s[N1-1];
+PS3[N1-1] = s[N1-1];
+
+repr(i , N1-2 ,0){
+  PS[i] = (PS[i+1] + (s[i]*h)% mod)%mod;
+  PS3[i] = (PS3[i+1] + (s[i]*h2)% mod2)%mod2;
+  h *= d ; h %= mod;
+  h2 *= d ; h2 %= mod2;
+}
+
+}
+
+
+int main() {
+    ff();
+    ll d = 256;
+    rep(i , 1 , 1e6){
+    pd[i].first = (pd[i-1].first * d) % mod; pd[i].first %= mod;
+   pd[i].second = (pd[i-1].second * d) % mod2; pd[i].second %= mod2;
+   }
+
+    
+    ll T;
+    cin >> T;
+    while (T--) {
+        solve();
+    }
+    return 0;
+}
