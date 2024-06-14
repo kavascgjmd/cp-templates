@@ -1,0 +1,132 @@
+#include <bits/stdc++.h>
+using namespace std;
+const double eps = 1e-6;
+#define ll long long
+#define pi pair
+typedef long double ld;
+#define pb push_back
+#define all(a) a.begin(), a.end()
+#define rep(i, a, b) for (ll i = a; i < b; i++)
+#define ff first
+#define ss second
+#define vt vector
+#define vi vt<ll>
+#define ub upper_bound
+#define lb lower_bound
+#define repr(i, n, a) for (ll i = n; i >= a; i--)
+#define dq deque
+#define inset(a, st) st.find(a) != st.end()
+#define issub(a, b) b.find(a) != string::npos
+#define len(a) (ll)a.size()
+const ld PI = 2 * acos(0.0);
+const ll mod2 = 1e9+7;
+const ll mod = 998244353;
+const ll nax = 2e5 + 5;
+const ll N = 2e3 + 1;
+
+void ff() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+}
+
+vt<ll>seg;
+vt<ll>lazy;
+ll build(ll l , ll r, ll i , vt<ll>&a){
+  if(l == r){
+   return seg[i] = a[l];
+  }
+  ll mid = l + (r-l)/2;
+  ll val1 = build(l , mid , 2*i , a);
+  ll val2 = build(mid+1, r , 2*i+1, a);
+  return seg[i] = val1 + val2;
+}
+ 
+ll query(ll l , ll r, ll i, ll k ){
+  if(lazy[i] != 0){
+    seg[i] += lazy[i] *(r-l+1);
+    if(l != r){
+        lazy[2*i] += lazy[i];
+        lazy[2*i+1] += lazy[i];
+    }
+    lazy[i] = 0;
+  }
+  if( l == r && l == k){
+    return seg[i];
+  }
+  if(l > k || r < k){
+    return 0;
+  }
+  ll mid = l + (r-l)/2;
+  ll val1 = query(l , mid , 2*i ,k);
+  ll val2 = query(mid+1, r , 2*i+1,k);
+  return val1 +val2;
+}
+ 
+ 
+ll update(ll l ,ll r , ll i, ll a , ll b, ll u){
+ if(lazy[i] != 0){
+    seg[i] += lazy[i]*(r-l+1ll);
+    if(l != r){
+        lazy[2*i] += lazy[i];
+        lazy[2*i+1] += lazy[i];
+    }
+    lazy[i] = 0;
+ }
+ if(l > b || r < a){
+    return 0;
+ }
+ if(l >= a && r <= b){
+    seg[i] += u*(r-l+1);
+    if(l != r){
+        lazy[2*i] += u;
+        lazy[2*i+1] += u;
+    }
+    return seg[i];
+ }
+  ll mid = l + (r-l)/2;
+  ll val1 = update(l , mid , 2*i , a, b, u);
+  ll val2 = update(mid+1, r , 2*i+1, a, b ,u);
+  return seg[i] = val1 + val2;
+}
+
+
+
+
+
+void solve(){
+ll n, q;
+cin>>n>>q;
+vt<ll>a(n);
+rep(i , 0 , n){
+    cin>>a[i];
+}
+seg.assign(4*n , 0);
+lazy.assign(4*n , 0);
+build(0, n-1 , 1 , a );
+while(q--){
+    ll t;
+    cin>>t;
+    if( t == 1){
+      ll a, b, u ;
+      cin>>a>>b>>u;
+      a--; b--;
+      update(0 , n-1 , 1 , a, b , u);
+    }
+    else {
+      ll k;
+      cin>>k ; k--;
+      cout <<query(0 , n-1, 1 , k)<<"\n";
+    }
+}
+}
+
+
+int main() {
+    // ff();
+    // ll T;
+    // cin >> T;
+    // while (T--) {
+        solve();
+    // }
+    return 0;
+}
