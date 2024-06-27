@@ -22,3 +22,30 @@ public:
         return sol;
     }
 };
+
+
+// second way 
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace __gnu_pbds; 
+#define ll long long 
+#define ordered_set tree<ll, null_type,less_equal<ll>, rb_tree_tag,tree_order_statistics_node_update> 
+#define vt vector
+
+#define rep(i, a, n) for(int i = a ; i<n; i ++)
+class Solution {
+public:
+    int countRangeSum(vector<int>& nums, int lower, int upper) {
+        ll sum = 0;
+        ordered_set o_set; 
+        o_set.insert(0);
+        ll sol = 0;
+        rep(i , 0 , nums.size()){
+           sum += nums[i];
+           sol +=  o_set.order_of_key(sum - lower+1ll)  - o_set.order_of_key(sum-upper);
+           o_set.insert(sum);
+           cout << sol <<" ";
+        }
+        return sol;
+    }
+};
