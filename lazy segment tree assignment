@@ -1,0 +1,63 @@
+
+
+vt<ll>seg;
+vt<ll>lazy;
+ll build(ll l , ll r, ll i , vt<ll>&a){
+  if(l == r){
+   return seg[i] = a[l];
+  }
+  ll mid = l + (r-l)/2;
+  ll val1 = build(l , mid , 2*i , a);
+  ll val2 = build(mid+1, r , 2*i+1, a);
+  return seg[i] = val1 + val2;
+}
+ 
+ll query(ll l , ll r, ll i, ll a,  ll b  ){
+  if(lazy[i] != -1){
+    seg[i] = lazy[i] *(r-l+1);
+    if(l != r){
+        lazy[2*i] = lazy[i];
+        lazy[2*i+1] = lazy[i];
+    }
+    lazy[i] = -1;
+  }
+  if( l >= a && r <= b){
+    return seg[i];
+  }
+  if(l > b || r < a){
+    return 0;
+  }
+  ll mid = l + (r-l)/2;
+  ll val1 = query(l , mid , 2*i ,a , b);
+  ll val2 = query(mid+1, r , 2*i+1,a, b);
+  return val1 +val2;
+}
+ 
+ 
+ll update(ll l ,ll r , ll i, ll a , ll b, ll u){
+    
+ if(lazy[i] != -1){
+    seg[i] = lazy[i]*(r-l+1ll);
+    if(l != r){
+        lazy[2*i] = lazy[i];
+        lazy[2*i+1] = lazy[i];
+    }
+    lazy[i] = -1;
+ }
+ if(l > b || r < a){
+    return seg[i];
+ }
+ if(l >= a && r <= b){
+    seg[i] = u*(r-l+1);
+    if(l != r){
+        lazy[2*i] = u;
+        lazy[2*i+1] = u;
+    }
+    return seg[i];
+ }
+  ll mid = l + (r-l)/2;
+  ll val1 = update(l , mid , 2*i , a, b, u);
+  ll val2 = update(mid+1, r , 2*i+1, a, b ,u);
+
+  return seg[i] = val1 + val2;
+}
