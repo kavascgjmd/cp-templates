@@ -1,46 +1,138 @@
-1 - b1) + x1);
-g[m*(1 - b2) + x2].push_back(m*b1 + x1);
-gr[m*b1 +x1].push_back(m*(1-b2) + x2);
+/*2-sat
+ first consider L = (x1 | x2) & (x2' | x3) & (x3 ' | x1)
+ the grpah for this is created 
+ for this consider first segment (x1 | x2)
+ x1' will be connected to x2 // means that x1' doesnt exist than x2 should exist
+ x2' will be connected to x1
+ now scc will be calculated 
+ and colors will be assigned 
+ if both x & x' have same condition which isnt possible hence answer will never be possible
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+const double eps = 1e-6;
+#define ll long long
+#define pi pair
+typedef long double ld;
+#define pb push_back
+#define all(a) a.begin(), a.end()
+#define rep(i, a, b) for (ll i = a; i < b; i++)
+#define ff first
+#define ss second
+#define vt vector
+#define vi vt<ll>
+#define ub upper_bound
+#define lb lower_bound
+#define repr(i, n, a) for (ll i = n; i >= a; i--)
+#define dq deque
+#define inset(a, st) st.find(a) != st.end()
+#define issub(a, b) b.find(a) != string::npos
+#define len(a) (ll)a.size()
+const ld PI = 2 * acos(0.0);
+const ll mod2 = 1e9+7;
+const ll mod = 998244353;
+const ll nax = 2e5 + 5;
+const ll N = 2e5 + 1;
+
+void ff() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
 }
+
+void dfs(vt<bool>& visited, vt<vt<int>>&g, int st, vt<int>&topo){
+    visited[st]  = 1;
+    
+    for(auto & x : g[st]){
+        if(!visited[x]){
+            dfs( visited, g, x, topo);
+    }
+    }
+    topo.push_back(st);
+}
+ 
+void dfs2(int st, vt<vt<int>>&g, int color , vt<int>& colors, vt<bool>& visited ){
+    visited[st] = 1;
+    colors[st] = color;
+    for(auto & x: g[st]){
+       if(!visited[x]){
+        dfs2( x, g , color, colors, visited);
+       }
+    }
+}
+void solve() {
+int n ; cin>>n;
+vt<vt<int>>a(3 , vt<int>(n , 0));
+rep(i , 0 , 3){
+    rep(j , 0 , n){
+        cin>>a[i][j];
+    }
+}
+vt<vt<int>>g(2*n) , gr(2*n);
+rep(i , 0 , n){
+    int c1 =0 , c2 =0 , c3 =0;
+    int a1, a2, a3;
+    a1 = a[0][i]; a2 = a[1][i]; a3 = a[2][i];
+    if(a1 > 0){
+        c1 = 1;
+    }  
+    if(a2 > 0){
+        c2 = 1;
+    }
+    if(a3 > 0){
+        c3 = 1;
+    }
+    a1 = abs(a1); a2 = abs(a2); a3 = abs(a3);
+    a1 --; a2-- ;a3--;
+    // cout << a1<<" "<<c1<<" "<<a2<<" "<<c2<<" "<<a3<<" "<<c3 <<"   ";
+    g[n*(1-c1)+a1].push_back(n*c2+a2);
+    g[n*(1-c2)+a2].push_back(n*c1+a1);
+    g[n*(1-c1)+a1].push_back(n*c3+a3);
+    g[n*(1-c3)+a3].push_back(n*c1+a1);
+    g[n*(1-c2)+a2].push_back(n*c3+a3);
+    g[n*(1-c3)+a3].push_back(n*c2+a2);
+
+    gr[n*c2+a2].push_back(n*(1-c1)+a1);
+    gr[n*c1+a1].push_back(n*(1-c2)+a2);
+    gr[n*c3+a3].push_back(n*(1-c1)+a1);
+    gr[n*c1+a1].push_back(n*(1-c3)+a3);
+    gr[n*c3+a3].push_back(n*(1-c2)+a2);
+    gr[n*c2+a2].push_back(n*(1-c3)+a3);
+  
+}
+
 vt<int>topo;
-vt<bool>visited(2*m , 0);
-for(int i = 0 ; i<2*m ; i++){
+vt<bool>visited(2*n , 0);
+for(int i = 0 ; i<2*n ; i++){
     if(!visited[i]){
         dfs(visited, g, i, topo);
     }
 }
  
 reverse(all(topo));
-visited.assign(2*m ,0);
-int color = 0; vt<int>colors(2*m,0);
+visited.assign(2*n ,0);
+int color = 0; vt<int>colors(2*n,0);
 for(auto & x : topo){
     if(!visited[x]){
         dfs2(x, gr, color++, colors, visited);
     }
 }
-vt<char>ans(m);
-rep(i , 0 , m){
-    if(colors[i] == colors[i+m]){
-        cout <<"IMPOSSIBLE\n"; return;
-    }
-    if(colors[i] < colors[i+m]){
-        ans [i] = '+';
-    }
-    else {
-        ans[i] = '-';
+
+rep(i , 0 , n){
+    if(colors[i] == colors[i+n]){
+        cout <<"NO\n";return;
     }
 }
-rep(i , 0 , m){
-    cout << ans[i]<<" ";
+cout <<"YES\n";
+
 }
-}
- 
+
 int main() {
     // ff();
-    // ll T;
-    // cin >> T;
-    // while (T--) {
+    ll T;
+    cin >> T;
+    while (T--) {
         solve();
-    // }
+    }
     return 0;
 }
