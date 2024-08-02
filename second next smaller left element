@@ -1,0 +1,22 @@
+   stack<int> st, stt;
+    LL.resize(n, -1);
+    L.resize(n, -1);
+
+    for (int i = n - 1; i >= 0; --i) {
+        while (!stt.empty() && a[stt.top()] > a[i]) {
+            LL[stt.top()] = i;
+            stt.pop();
+        }
+        stack<int> temp;
+        while (!st.empty() && a[st.top()] > a[i]) {
+            L[st.top()] = i;
+            temp.push(st.top());
+            st.pop();
+        }
+
+        while (!temp.empty()) {
+            stt.push(temp.top());
+            temp.pop();
+        }
+        st.push(i);
+    }
