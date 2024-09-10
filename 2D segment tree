@@ -1,0 +1,166 @@
+#include <bits/stdc++.h>
+using namespace std;
+const double eps = 1e-6;
+#define ll long long
+typedef long double ld;
+#define pb push_back // for vector
+#define pi pair
+#define all(a) a.begin(), a.end()
+#define rep(i, a, b) for (ll i = a; i < b; i++)
+#define ff first
+#define ss second
+#define vt vector
+#define vi vt<ll>
+#define ub upper_bound
+#define lb lower_bound
+#define repr(i, n, a) for (ll i = n; i >= a; i--)
+#define dq deque
+#define inset(a, st) st.find(a) != st.end()
+#define issub(a, b) b.find(a) != string::npos // check if a is substr of b
+#define len(a) (ll)a.size()
+const ld PI = 2 * acos(0.0);
+const ll mod = 1e9+7;
+const ll mod2 = 998244353;
+const ll nax = 2e5 + 5;
+const ll LIM = 8e5+50;
+const ll N = 1e6+1;
+
+void ff(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+}
+
+vt<vt<int>>seg;
+
+
+void buildy(int xi, int yi, int xl, int xr, int yl , int yr, vt<vt<int>>&a){
+   if(yl == yr){
+    if(xl == xr){
+      seg[xi][yi] = a[xl][yl]; return;
+    }
+    else {
+      seg[xi][yi] = seg[2*xi][yi]+ seg[2*xi+1][yi]; return;
+    }
+   }
+   int midy =  yl +  (yr - yl)/2;
+   buildy(xi, 2*yi, xl, xr, yl, midy, a);
+   buildy(xi, 2*yi+1 ,xl, xr, midy+1 , yr, a);
+   seg[xi][yi] = seg[xi][2*yi] + seg[xi][2*yi+1];
+
+}
+
+void buildx(int xi, int xl, int xr , vt<vt<int>>&a){
+  if(xl != xr){
+  int midx = xl + (xr - xl)/2;
+  buildx(2*xi , xl, midx , a);
+  buildx(2*xi+1, midx+1 , xr, a );
+  }
+  int m = a[0].size();
+  buildy(xi, 1 ,  xl, xr, 0 , m-1 , a);
+}
+
+void updatey(int xi, int yi , int xl , int xr ,int yl ,int yr, int a, int b, int val){
+  if(yl == yr && yr == b){
+    if(xl == xr && xl == a){
+      seg[xi][yi] = val;
+      return;
+    }
+    seg[xi][yi] = seg[2*xi][yi] + seg[2*xi+1][yi]; return;
+  }
+  else if(yl == yr){return;}
+  if(yl > b || yr < b){
+    return;
+  }
+  int midy = yl + (yr - yl)/2;
+  updatey(xi , 2*yi , xl , xr, yl ,midy , a, b, val);
+  updatey(xi, 2*yi+1, xl, xr, midy+1 , yr, a, b , val);
+  seg[xi][yi] = seg[xi][2*yi] + seg[xi][2*yi+1];
+}
+
+void updatex(int xi, int xl, int xr,  int a, int b, int val, int m){
+  if(xl > a || xr < a){
+    return;
+  }
+  if(xl != xr){
+    int midx = xl + (xr-xl)/2;
+    updatex(2*xi, xl, midx, a, b, val, m);
+    updatex(2*xi+1 , midx+1, xr , a, b, val, m);
+  }
+  updatey(xi, 1 , xl, xr, 0 , m-1, a, b , val );
+}
+
+int queryy(int xi, int yi, int xl, int xr, int yl , int yr, int x1 , int x2, int y1 , int y2){
+    if(yl > y2 || yr < y1){
+      return 0;
+    }
+    if(yl >= y1 && yr <= y2){
+       return seg[xi][yi];
+    }
+    int midy = yl + (yr-yl)/2;
+    return queryy(xi , 2*yi, xl, xr, yl , midy, x1 , x2, y1 , y2 ) + queryy(xi , 2*yi+1, xl, xr, midy+1 , yr, x1, x2  , y1 , y2);
+}
+
+int queryx(int xi, int xl, int xr, int x1 , int x2 , int y1 , int y2 , int m){
+  if(xl > x2 || xr < x1){
+    return 0;
+  }
+  if(xl >= x1 && xr <= x2){
+    return queryy(xi , 1 , xl, xr, 0 , m-1 , x1, x2 , y1 , y2);
+  }
+  
+    int midx = xl + (xr - xl)/2;
+    return queryx(2*xi , xl  , midx, x1 , x2, y1 , y2,  m) +  queryx(2*xi+1 , midx+1 ,xr, x1 , x2 , y1 , y2 , m);
+  
+}
+
+
+void solve()
+{
+int n, q;
+cin>>n>>q;
+vt<vt<int>>a(n,vt<int>(n, 0));
+rep(i , 0 , n){
+  rep(j , 0 , n){
+    char ch ; cin>>ch;
+    if(ch == '*'){
+      a[i][j] = 1;
+    }
+  }
+}
+
+rep(i , 0 , 4*n){
+  vt<int>temp(4*a[0].size());
+  seg.push_back(temp);
+}
+
+buildx(1 , 0  , n -1 , a);
+int m = a[0].size();
+while(q--){
+  int t;
+  cin>>t;
+  if(t == 1){
+   int x, y;
+   cin>>x>> y; x--; y--;
+   updatex(1 , 0 , n-1 , x, y, !a[x][y] , m);
+   a[x][y] = !a[x][y];
+  }
+  else{
+ 
+   int x1 , y1 , x2 , y2;
+   cin>>x1>>y1>>x2>>y2;
+   x1-- ; y1-- ; x2 -- ; y2 --;
+   cout <<queryx(1 , 0 , n-1, x1, x2, y1 , y2, m)<<"\n";
+  }
+}
+}
+
+int main() {
+    // ff();  
+    // ll t;
+    // cin >> t;
+    // while (t--) {
+        solve();
+    // }
+    return 0;
+}
