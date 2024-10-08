@@ -1,0 +1,166 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll int
+#define pb push_back
+#define rep(i, a, b) for (ll i = a; i < b; i++)
+const ll nax = 2e5 + 5;
+const ll INF = INT_MIN;
+
+void ff() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+}
+
+ll tim = 0, label = 0;
+vector<ll> timerin, timerout, labels, labelsr, parent, seg;
+
+void build(ll n, vector<ll>& a) {
+    for (ll i = 0; i < n; i++) {
+        seg[n + i] = a[labelsr[i]];
+    }
+    for (ll i = n - 1; i > 0; --i) {
+        seg[i] = max(seg[i * 2], seg[i * 2 + 1]);
+    }
+}
+
+ll query(ll l, ll r, ll n) {
+    l += n; r += n;
+    ll res = INF;
+    while (l <= r) {
+        if (l % 2 == 1) res = max(res, seg[l++]);
+        if (r % 2 == 0) res = max(res, seg[r--]);
+        l /= 2; r /= 2;
+    }
+    return res;
+}
+
+void update(ll pos, ll val, ll n) {
+    pos += n;
+    seg[pos] = val;
+    for (pos /= 2; pos >= 1; pos /= 2) {
+        seg[pos] = max(seg[2 * pos], seg[2 * pos + 1]);
+    }
+}
+
+bool isancestor(ll u, ll v) {
+    return timerin[u] <= timerin[v] && timerout[u] >= timerout[v];
+}
+
+ll lca(ll u, ll v, vector<vector<ll>>& up) {
+    if (isancestor(u, v)) return u;
+    if (isancestor(v, u)) return v;
+    for (ll i = up.size() - 1; i >= 0; --i) {
+        if (!isancestor(up[i][u], v)) {
+            u = up[i][u];
+        }
+    }
+    return up[0][u];
+}
+
+void dfs(ll u, ll p, vector<vector<ll>>& g, vector<ll>& size, vector<vector<ll>>& up, vector<ll>& heavy, vector<ll>& depth) {
+    up[0][u] = p;
+    depth[u] = depth[p] + 1;
+    parent[u] = p;
+    size[u] = 1;
+    timerin[u] = ++tim;
+
+    for (ll i = 1; i < up.size(); ++i) {
+        up[i][u] = up[i - 1][up[i - 1][u]];
+    }
+
+    ll max_size = 0;
+    for (auto v : g[u]) {
+        if (v != p) {
+            dfs(v, u, g, size, up, heavy, depth);
+            size[u] += size[v];
+            if (size[v] > max_size) {
+                max_size = size[v];
+                heavy[u] = v;
+            }
+        }
+    }
+    timerout[u] = ++tim;
+}
+
+void decompose(ll u, ll p, ll h, vector<ll>& head, vector<ll>& heavy, vector<vector<ll>>& g) {
+    head[u] = h;
+    labels[u] = label++;
+    labelsr[labels[u]] = u;
+
+    if (heavy[u] != -1) {
+        decompose(heavy[u], u, h, head, heavy, g);
+    }
+
+    for (auto v : g[u]) {
+        if (v != p && v != heavy[u]) {
+            decompose(v, u, v, head, heavy, g);
+        }
+    }
+}
+
+ll queryhld(ll u, ll v, vector<ll>& depth, vector<ll>& head, ll n) {
+    ll res = INF;
+    while (head[u] != head[v]) {
+        if (depth[head[u]] > depth[head[v]]) swap(u, v);
+        res = max(res, query(labels[head[v]], labels[v], n));
+        v = parent[head[v]];
+    }
+    if (depth[u] > depth[v]) swap(u, v);
+    res = max(res, query(labels[u], labels[v], n));
+    return res;
+}
+
+void solve() {
+    ll n, q;
+    cin >> n >> q;
+    vector<ll> v(n + 1);
+    for (ll i = 1; i <= n; ++i) cin >> v[i];
+
+    timerin.assign(n + 1, 0);
+    timerout.assign(n + 1, 0);
+    labels.assign(n + 1, 0);
+    labelsr.assign(n + 1, 0);
+    parent.assign(n + 1, 0);
+    seg.assign(2 * n, INF);
+
+    vector<vector<ll>> g(n + 1);
+    for (ll i = 0; i < n - 1; ++i) {
+        ll u, v;
+        cin >> u >> v;
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+
+    ll L = ceil(log2(n));
+    vector<vector<ll>> up(L + 1, vector<ll>(n + 1));
+    vector<ll> size(n + 1), heavy(n + 1, -1), depth(n + 1, 0), head(n + 1);
+
+    dfs(1, 1, g, size, up, heavy, depth);
+    decompose(1, 1, 1, head, heavy, g);
+    build(n, v);
+
+    while (q--) {
+        ll t;
+        cin >> t;
+        if (t == 1) {
+            ll s, x;
+            cin >> s >> x;
+            v[s] = x;
+            update(labels[s], x, n);
+        } else {
+            ll a, b;
+            cin >> a >> b;
+            ll lca_ab = lca(a, b, up);
+            ll left = queryhld(lca_ab, a, depth, head, n);
+            ll right = queryhld(lca_ab, b, depth, head, n);
+            cout << max(left, right) << "\n";
+        }
+    }
+}
+
+int main() {
+    ff();
+    solve();
+    return 0;
+}
