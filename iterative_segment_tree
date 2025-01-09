@@ -4,45 +4,54 @@ using namespace std;
 #define vt vector
 #define rep(i, a, n) for (int i = a; i < n; i++)
 const int N = 1e5; // limit for array size
-int n; // array size
+int n;             // array size
 int t[2 * N];
-void build(vt<int>& a) {
-for (int i = 0; i < n; ++i) t[n + i] = a[i];
-for (int i = n - 1; i > 0; --i) t[i] = t[i << 1]
-+ t[i << 1 | 1];
+void build(vt<int> &a)
+{
+    for (int i = 0; i < n; ++i)
+        t[n + i] = a[i];
+    for (int i = n - 1; i > 0; --i)
+        t[i] = t[i << 1] + t[i << 1 | 1];
 }
-void modify(int p, int value) {
-for (t[p += n] = value; p > 1; p >>= 1) t[p
->> 1] = t[p] + t[p ^ 1];
+void modify(int p, int value)
+{
+    for (t[p += n] = value; p > 1; p >>= 1)
+        t[p >> 1] = t[p] + t[p ^ 1];
 }
-int query(int l, int r) { // sum on interval [l,
-r)
+int query(int l, int r)
+{ // sum on interval [l,r)
 int res = 0;
 for (l += n, r += n; l < r; l >>= 1, r >>= 1)
 {
-if (l & 1) res += t[l++];
-if (r & 1) res += t[--r];
+    if (l & 1)
+        res += t[l++];
+    if (r & 1)
+        res += t[--r];
 }
 return res;
 }
-int main() {
-int q;
-cin >> n >> q;
-vt<int> a(n);
-rep(i, 0, n) cin >> a[i];
-build(a);
-while (q--) {
-int t;
-cin >> t;
-if (t == 1) {
-int k, u;
-cin >> k >> u;
-modify(--k, u); // 0-based index
-} else {
-int a, b;
-cin >> a >> b;
-cout << query(--a, b) << "\n"; //
-Query on range [a, b)
-}
-}
+int main()
+{
+    int q;
+    cin >> n >> q;
+    vt<int> a(n);
+    rep(i, 0, n) cin >> a[i];
+    build(a);
+    while (q--)
+    {
+        int t;
+        cin >> t;
+        if (t == 1)
+        {
+            int k, u;
+            cin >> k >> u;
+            modify(--k, u); // 0-based index
+        }
+        else
+        {
+            int a, b;
+            cin >> a >> b;
+            cout << query(--a, b) << "\n"; //Query on range [a, b)
+        }
+    }
 }
