@@ -1,0 +1,92 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define vt vector
+ 
+ll n, h;
+vt<ll> t, d;
+ 
+void apply(ll p, ll value) {
+    t[p] += value;
+    if (p < n) d[p] += value;
+}
+ 
+void build(ll p) {
+    while (p > 1) {
+        p >>= 1;
+        t[p] = max(t[p << 1], t[p << 1 | 1]) + d[p];
+    }
+}
+ 
+void push(ll p) {
+    for (ll s = h; s > 0; --s) {
+        ll i = p >> s;
+        if (d[i] != 0) {
+            apply(i << 1, d[i]);
+            apply(i << 1 | 1, d[i]);
+            d[i] = 0;
+        }
+    }
+}
+ 
+void inc(ll l, ll r, ll value) {
+    l += n, r += n;
+    ll l0 = l, r0 = r;
+    for (; l < r; l >>= 1, r >>= 1) {
+        if (l & 1) apply(l++, value);
+        if (r & 1) apply(--r, value);
+    }
+    build(l0);
+    build(r0 - 1);
+}
+ 
+ll query(ll l, ll r) {
+    l += n, r += n;
+    push(l);
+    push(r - 1);
+    ll res = -2e9;
+    for (; l < r; l >>= 1, r >>= 1) {
+        if (l & 1) res = max(res, t[l++]);
+        if (r & 1) res = max(t[--r], res);
+    }
+    return res;
+}
+ 
+void solve() {
+    ll q;
+    cin >> n >> q;
+    h = sizeof(ll) * 8 - __builtin_clz(n); // Height of the tree
+    t.assign(2 * n, 0);
+    d.assign(n, 0);
+ 
+    for (ll i = 0; i < n; i++) {
+        ll x;
+        cin >> x;
+        t[n + i] = x;
+    }
+ 
+    for (ll i = n - 1; i > 0; --i) t[i] = max(t[i << 1], t[i << 1 | 1]);
+ 
+    while (q--) {
+        ll type;
+        cin >> type;
+        if (type == 1) {
+            ll a, b, u;
+            cin >> a >> b >> u;
+            --a; // Convert to 0-based index
+            inc(a, b, u);
+        } else if (type == 2) {
+            ll k;
+            cin >> k;
+            --k; // Convert to 0-based index
+            cout << query(k, k + 1) << "\n";
+        }
+    }
+}
+ 
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    solve();
+    return 0;
+}
