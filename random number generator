@@ -1,0 +1,6 @@
+    random_device rd;
+    mt19937_64 gen(rd());
+    uniform_int_distribution<unsigned long long>dist(1, 1e18);
+    rep(i , 0  , N ){
+        random_numbers[i] = dist(gen);
+    }
