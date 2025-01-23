@@ -1,0 +1,20 @@
+while(r - l >= 3){
+  int mid1 = l + (r-l)/3;
+  int mid2 = r - (r-l)/3;
+  int f1 = f(na, nb, mid1, k), f2 = f(na, nb, mid2, k);
+ 
+  res = max({f1 , f2, res});
+  if(f1 > f2){
+   r = mid2;
+  }
+  else if(f2 > f1){
+   l = mid1 ;
+  }
+  else {
+    l = mid1 ;
+    r = mid2;
+  }
+}
+rep(i , l , r+1){
+    res = max(res, f(na, nb, i ,k));
+}
