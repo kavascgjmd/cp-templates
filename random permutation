@@ -1,0 +1,25 @@
+    random_device rd;
+    mt19937_64 gen(rd());
+int getnum(vt<int>&v){
+    int n = v.size();
+
+    uniform_int_distribution<unsigned long long>dist(0, n-1);
+    int index = dist(gen) ;
+    int num = v[index];
+    swap(v[index], v[n-1]);
+    v.pop_back();
+    return num;
+}
+
+vt<int>randomPermutation(int n){
+    vt<int>a(n);
+    rep(i , 0 , n){
+        a[i] = i+1;
+    }
+    vt<int>res;
+    while(a.size()){
+    int val = getnum(a);
+    res.push_back(val);
+    }
+    return res;
+}
