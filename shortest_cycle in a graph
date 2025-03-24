@@ -1,0 +1,31 @@
+
+rep(i , 0 , n){
+    queue<pi<int,int>>q;
+       vt<int>visited(n , 0);
+        q.push({i , i});
+        int h = 0;
+        while(q.size()){
+            int m = q.size();
+            while(m -- ){
+            int top = q.front().first; 
+            int parent = q.front().second;
+            q.pop();
+            visited[top] = h;
+            for(auto & x : g[top]){
+                if(x == parent){continue;}
+                if(visited[x] != 0){
+                    sol = min(sol , visited[x]+h+1);
+                    break;
+                }
+                else {
+                    q.push({x, top});
+                  
+                }          
+            }
+        }
+        h++;
+       
+        }
+       
+    
+}
